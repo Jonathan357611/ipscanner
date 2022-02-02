@@ -2,7 +2,6 @@
 # By Jonathan F.
 import curses
 import sys
-import subprocess
 import getopt
 import netaddr
 import threading
@@ -69,9 +68,9 @@ def main(stdsrc):
     # Get passed arguments
     try:
         opts, args = getopt.getopt(
-            sys.argv[1:], ":h:t:s:e:", ["help", "threads", "range-start", "range-end"]
+            sys.argv[1:], ":h:t:s:e:"
         )
-    except getopt.GetoptError:  # If "-h / --help" is passed, it raises this error.
+    except getopt.GetoptError:  # If "-h" is passed, it raises this error.
         PrintAndExit(
             "--help / -h : This help message\n--threads / -t : Specify threads (default=255)\n--range-start / -s : Start of IP-range (default=192.168.178.1)\n--range-end / e: End of IP-range (default=192.168.178.255)"
         )
@@ -85,10 +84,10 @@ def main(stdsrc):
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             PrintAndExit(
-                "--help / -h : This help message\n--threads / -t : Specify threads (default=255)\n--range-start / -s : Start of IP-range (default=1)\n--range-end / e: End of IP-range (default=255)"
+                "-h : This help message\n-t : Specify threads (default=255)\n-s : Start of IP-range (default=1)\n-e: End of IP-range (default=255)"
             )
 
-        if opt in ("-t", "--threads"):
+        elif opt in ("-t", "--threads"):
             if arg.isdigit():
                 if int(arg) <= 255 and int(arg) >= 1:
                     threads = int(arg)
@@ -97,15 +96,16 @@ def main(stdsrc):
             else:
                 PrintAndExit(f"{opt} has to be numeric!")
 
-        if opt in ("-s", "--range-start"):
+        if opt in ["-s", "--range-start"]:
             range_start = arg
-        if opt in ("-e", "--range-end"):
+        elif opt in ["-e", "--range-end"]:
+            PrintAndExit(arg)
             range_end = arg
 
     try:
         all_ips = list(netaddr.iter_iprange(range_start, range_end))
     except Exception as e:
-        PrintAndExit("Please enter valid start and end IP's.")
+        PrintAndExit(f"{e}\nPlease enter valid start and end IP's.")
     if all_ips == []:
         PrintAndExit("The range-start has to be smaller than the range-end")
 
