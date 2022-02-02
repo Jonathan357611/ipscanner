@@ -1,5 +1,5 @@
 # IPScanner 🔬
-A simple threaded tool written in python3 that can monitor local IP's in your network.
+A simple threaded IP-Scanner written in python3 that can monitor local IP's in your network.
 
 
 #### Demo:
