@@ -23,6 +23,7 @@ class GetIpInfo(threading.Thread):
         super(GetIpInfo, self).__init__()
         self.ips = data["ips"]
         self.stdsrc = data["stdsrc"]
+        self.timeout = data["timeout"]
         self.results = {"total_scanned": 0, "online": 0, "online_ip_data": []}
 
     def run(self):
@@ -40,7 +41,7 @@ class GetIpInfo(threading.Thread):
             self.temp_data_list = []
 
             try:
-                response_time = ping3.ping(str(ip))
+                response_time = ping3.ping(str(ip), timeout=self.timeout)
                 self.stdsrc.addstr(column, row, str(ip), curses.color_pair(4))
                 self.results["online"] += 1
                 # Get more data about the current IP
@@ -67,18 +68,17 @@ def main(stdsrc):
 
     # Get passed arguments
     try:
-        opts, args = getopt.getopt(
-            sys.argv[1:], ":h:t:s:e:"
-        )
+        opts, args = getopt.getopt(sys.argv[1:], ":h:t:s:e:o:")
     except getopt.GetoptError:  # If "-h" is passed, it raises this error.
         PrintAndExit(
-            "--help / -h : This help message\n--threads / -t : Specify threads (default=255)\n--range-start / -s : Start of IP-range (default=192.168.178.1)\n--range-end / e: End of IP-range (default=192.168.178.255)"
+            "-h : This help message\n-t : Specify threads (default=255)\n-s : Start of IP-range (default=192.168.178.1)\n-e: End of IP-range (default=192.168.178.255)\n-o : timeout in milliseconds"
         )
 
     # Default values
     range_start = "192.168.178.1"
     range_end = "192.168.178.255"
     threads = 255
+    timeout = 0.5
 
     # Replace default values when requested with "opt"
     for opt, arg in opts:
@@ -100,6 +100,8 @@ def main(stdsrc):
             range_start = arg
         elif opt == "-e":
             range_end = arg
+        elif opt == "-o":
+            timeout = float(arg) / 1000
 
     try:
         all_ips = list(netaddr.iter_iprange(range_start, range_end))
@@ -124,7 +126,9 @@ def main(stdsrc):
     # Display initial placeholder text which will be updated later
     curses.curs_set(0)  # Disable blinking curser
     stdsrc.clear()
-    stdsrc.addstr(1, 2, f"Threads: {threads}", CYAN_BLACK)
+    stdsrc.addstr(
+        1, 2, f"Threads: {threads}         Timeout: {timeout*1000}ms", CYAN_BLACK
+    )
     stdsrc.addstr(2, 2, f"Scanning... [0/{len(all_ips)}]", YELLOW_BLACK)
     stdsrc.addstr(3, 2, "_" * (width - 2), CYAN_BLACK)
     stdsrc.refresh()
@@ -151,6 +155,7 @@ def main(stdsrc):
         data = {
             "ips": list(),
             "stdsrc": stdsrc,
+            "timeout": timeout,
         }
         for ip in ips:
             if i + 6 > height - 1:
