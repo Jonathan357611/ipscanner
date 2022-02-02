@@ -87,7 +87,7 @@ def main(stdsrc):
                 "-h : This help message\n-t : Specify threads (default=255)\n-s : Start of IP-range (default=1)\n-e: End of IP-range (default=255)"
             )
 
-        elif opt == "-t"
+        elif opt == "-t":
             if arg.isdigit():
                 if int(arg) <= 255 and int(arg) >= 1:
                     threads = int(arg)
@@ -96,9 +96,9 @@ def main(stdsrc):
             else:
                 PrintAndExit(f"{opt} has to be numeric!")
 
-        if opt "-s":
+        if opt == "-s":
             range_start = arg
-        elif opt "-e":
+        elif opt == "-e":
             range_end = arg
 
     try:
