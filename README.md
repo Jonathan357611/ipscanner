@@ -19,6 +19,7 @@ python3 main.py <arguments>
 - -t: Set threads (default=255) (max.=255)
 - -s: Set start of IP-range (default=192.168.178.1)
 - -e: Set end of IP-range (default=192.168.178.255)
+- -o: Set timeout in ms (default=500ms)
 
 ---
 
