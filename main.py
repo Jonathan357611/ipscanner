@@ -71,14 +71,14 @@ def main(stdsrc):
         opts, args = getopt.getopt(sys.argv[1:], ":h:t:s:e:o:")
     except getopt.GetoptError:  # If "-h" is passed, it raises this error.
         PrintAndExit(
-            "-h : This help message\n-t : Specify threads (default=255)\n-s : Start of IP-range (default=192.168.178.1)\n-e: End of IP-range (default=192.168.178.255)\n-o : timeout in milliseconds"
+            "-h : This help message\n-t : Specify threads (default=255)\n-s : Start of IP-range (default=192.168.1.1)\n-e: End of IP-range (default=192.168.1.255)\n-o : timeout in milliseconds"
         )
 
     # Default values
-    range_start = "192.168.178.1"
-    range_end = "192.168.178.255"
+    range_start = "192.168.1.1"
+    range_end = "192.168.1.255"
     threads = 255
-    timeout = 0.5
+    timeout = 5
 
     # Replace default values when requested with "opt"
     for opt, arg in opts:
